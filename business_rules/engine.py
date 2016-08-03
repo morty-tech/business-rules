@@ -3,24 +3,27 @@ from .fields import FIELD_NO_INPUT
 def run_all(rule_list,
             defined_variables,
             defined_actions,
-            stop_on_first_trigger=False):
+            stop_on_first_trigger=False,
+            return_triggered_actions=False):
 
     rule_was_triggered = False
+    triggered_actions = []
     for rule in rule_list:
-        result = run(rule, defined_variables, defined_actions)
+        result, actions = run(rule, defined_variables, defined_actions)
         if result:
             rule_was_triggered = True
+            triggered_actions.extend(actions)
             if stop_on_first_trigger:
-                return True
-    return rule_was_triggered
+                return (True, actions) if return_triggered_actions else True
+    return (rule_was_triggered, triggered_actions) if return_triggered_actions else rule_was_triggered
 
 def run(rule, defined_variables, defined_actions):
     conditions, actions = rule['conditions'], rule['actions']
     rule_triggered = check_conditions_recursively(conditions, defined_variables)
     if rule_triggered:
         do_actions(actions, defined_actions)
-        return True
-    return False
+        return (True, actions)
+    return (False, [])
 
 
 def check_conditions_recursively(conditions, defined_variables):

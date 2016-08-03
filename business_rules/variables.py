@@ -8,6 +8,7 @@ from .operators import (BaseType,
                         SelectType,
                         SelectMultipleType)
 
+
 class BaseVariables(object):
     """ Classes that hold a collection of variables to use with the rules
     engine should inherit from this.
